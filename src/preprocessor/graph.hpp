@@ -127,12 +127,16 @@ class TreeDecomposition {
  	int Centroid() const;
   vector<int> GetOrd() const;
  private:
- 	int bs, n, width;
- 	Graph tree;
- 	vector<vector<int>> bags;
+	int bs, n, width;
+	vector<vector<int>> tree;
+	// bags[b] stores the sorted vertex list of bag b (bag-centric view).
+	vector<vector<int>> bags;
+	// vertex_bags[v] stores all bag IDs containing v (vertex-centric index).
+	// This duplicates membership information to speed up checks like Verify().
+	vector<vector<int>> vertex_bags;
   void OdDes(int b, int p, int d, vector<int>& ret) const;
- 	int CenDfs(int x, int p, int& cen) const;
- 	bool dfs(int x, int v, int p, vector<int>& u) const;
+	int CenDfs(int x, int p, int& cen) const;
+	bool dfs(int x, int v, int p, vector<int>& u) const;
 };
 
 // Implementation
