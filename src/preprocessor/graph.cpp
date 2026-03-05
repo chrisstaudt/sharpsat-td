@@ -770,10 +770,12 @@ int Graph::MaximalIS(const Bitset& vs) const {
 }
 
 TreeDecomposition::TreeDecomposition(int bs_, int n_)
- : bs(bs_), n(n_), width(-1), tree(bs+1), bags(bs+1) {}
+ : bs(bs_), n(n_), width(-1), tree(bs+1), bags(bs+1), vertex_bags(n) {}
 
 void TreeDecomposition::AddEdge(int a, int b) {
-	tree.AddEdge(a, b);
+	assert(1 <= a && a <= bs && 1 <= b && b <= bs && a != b);
+	tree[a].push_back(b);
+	tree[b].push_back(a);
 }
 
 void TreeDecomposition::SetBag(int v, vector<int> bag) {
@@ -784,6 +786,7 @@ void TreeDecomposition::SetBag(int v, vector<int> bag) {
 	width = max(width, (int)bags[v].size()-1);
 	for (int u : bags[v]) {
 		assert(0 <= u && u < n);
+		vertex_bags[u].push_back(v);
 	}
 }
 
@@ -801,7 +804,7 @@ bool TreeDecomposition::dfs(int x, int v, int p, vector<int>& u) const {
 	assert(u[x] != v);
 	u[x] = v;
 	bool ok = true;
-	for (int nx : tree.Neighbors(x)) {
+	for (int nx : tree[x]) {
 		if (InBag(nx, v) && nx != p) {
 			if (u[nx] == v) {
 				return false;
@@ -839,17 +842,18 @@ bool TreeDecomposition::Verify(const Graph& graph) const {
 		u[i] = -1;
 	}
 	for (int i = 0; i < n; i++) {
+		if (vertex_bags[i].empty()) {
+			return false;
+		}
 		bool f = false;
-		for (int j = 1; j <= bs; j++) {
-			if (InBag(j, i)) {
-				if (!f) {
-					bool ok = dfs(j, i, 0, u);
-					if (!ok) return false;
-					f = true;
-				}
-				if (u[j] != i) {
-					return false;
-				}
+		for (int j : vertex_bags[i]) {
+			if (!f) {
+				bool ok = dfs(j, i, 0, u);
+				if (!ok) return false;
+				f = true;
+			}
+			if (u[j] != i) {
+				return false;
 			}
 		}
 	}
@@ -883,7 +887,7 @@ int TreeDecomposition::nverts() const {
 
 const vector<int>& TreeDecomposition::Neighbors(int b) const {
 	assert(b >= 1 && b <= bs);
-	return tree.Neighbors(b);
+	return tree[b];
 }
 
 int TreeDecomposition::CenDfs(int b, int p, int& cen) const {
