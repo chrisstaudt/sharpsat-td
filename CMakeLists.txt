@@ -50,3 +50,7 @@ if(STATIC)
 SET_TARGET_PROPERTIES (flow_cutter_pace17 PROPERTIES LINK_SEARCH_START_STATIC 1)
 endif(STATIC)
 target_link_libraries (flow_cutter_pace17 libflowcutter)
+
+add_library(tensor2cnf SHARED src/tensor2cnf/tensor2cnf.cpp)
+target_include_directories(tensor2cnf PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/tensor2cnf)
+set_target_properties(tensor2cnf PROPERTIES OUTPUT_NAME "sharpsat_td_tensor2cnf")
