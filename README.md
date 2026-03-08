@@ -52,3 +52,10 @@ In the competition setting the value of the `-decot` flag was 120.
 - `-WE` - enable weighted model counting with arbitrary precision.
 - `-WD` - enable weighted model counting with double precision. WARNING: With this flag there may be large errors in the output.
 - `-prec` - the number of digits in output of weighted model counting. Does not affect the internal precision.
+
+
+## Python tensor -> CNF interface
+
+There is also a C++ shared library + Python wrapper for encoding Boolean tensors (`shape=(2,)*n`) from NumPy/Torch into CNF with size/runtime safeguards.
+
+See `docs/python_tensor_to_cnf_interface.md` for build and usage.
